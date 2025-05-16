@@ -1,0 +1,30 @@
+{
+  "name": "drag-drop-email-builder-grapesjs",
+  "version": "0.0.1",
+  "description": "Drag-drop email builder plugin for Bubble.io using grapesjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "email",
+    "grapesjs",
+    "bubble.io",
+    "plugin"
+  ],
+  "author": "Ali Farahat",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint": "^9.26.0",
+    "eslint-plugin-html": "^8.1.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jquery": "^1.5.1",
+    "globals": "^16.1.0"
+  },
+  "dependencies": {
+    "json-schema-faker": "^0.5.9",
+    "json-schema-generator": "^2.0.6",
+    "dot-object": "^2.1.5"
+  }
+}
