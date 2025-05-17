@@ -268,8 +268,7 @@ instance.data.isReady = false; // Crucial for async
   * context.keys (Server Only): Access API keys: context.keys.yourKeyName.  
   * **Async Ops (Server):**  
     * **Preferred (API v4+):** Enforce async function(properties, context) { ... } with await. Require try...catch.  
-    * **Legacy:** context.async((cb) \=\> { cb(null, res) / cb(err) }). Avoid mixing with async/await.  
-  * context.log(...) (Server Logging): **Mandate exclusive use** for server logs. **Prohibit** console.log **on server.** (ESLint: no-console).  
+    * **Legacy:** context.async((cb) \=\> { cb(null, res) / cb(err) }). Avoid mixing with async/await.   
   * context.reportDebugger('message') (Client Debugging): For dev messages to Bubble Debugger (debug\_mode=true). **Not for end-users.**  
   * **File Uploads (Server):**  
     * context.uploadContent(fileName, base64Contents, callback, \[attachTo\]).  
@@ -277,7 +276,7 @@ instance.data.isReady = false; // Crucial for async
     * Ensure err/url handling in callback.  
   * context.onCookieOptIn(callback) (Client): Executes callback post-consent. Ensure proper use.  
 * **Error Handling (General):**  
-  * **Server:** Require try...catch for fallible code. context.log in catch. Return meaningful errors.  
+  * **Server:** Require try...catch for fallible code. console.log in catch. Return meaningful errors.  
   * **Client:** Require try...catch for critical sections. context.reportDebugger for dev logs. User feedback via UI/state/events. Handle file upload errors in callbacks.  
 * **Complex Server-Side Return Values:**  
   * *Guidance: Bubble workflows prefer simple key-values.*  

@@ -1,4 +1,4 @@
-let ssa = async function(properties, context) {
+async function(properties, context) {
     // /* eslint-disable no-unused-vars */ /* If context not directly used */
 
     const Dot = require('dot-object'); // Rule IV.A.12: require inside function
@@ -7,10 +7,12 @@ let ssa = async function(properties, context) {
     let keyValuesList = [];
 
     if (!properties.source_json || typeof properties.source_json !== 'string' || properties.source_json.trim() === '') {
-        context.log('Convert JSON to Dot Notation: source_json is empty or not a string.');
+        console.log('Convert JSON to Dot Notation: source_json is empty or not a string.');
         return {
             dot_notation_keys: [],
-            dot_notation_key_values: []
+            dot_notation_key_values: [],
+            is_error: true,
+            error_message: 'source_json is empty or not a string.'
         };
     }
 
@@ -49,15 +51,19 @@ let ssa = async function(properties, context) {
 
         return {
             dot_notation_keys: keysList,
-            dot_notation_key_values: keyValuesList
+            dot_notation_key_values: keyValuesList,
+            is_error: false,
+            error_message: ''
         };
 
     } catch (error) {
-        context.log(`Error in Convert JSON to Dot Notation: ${error.message}. Input JSON: ${properties.source_json.substring(0, 200)}`);
+        console.log(`Error in Convert JSON to Dot Notation: ${error.message}. Input JSON: ${properties.source_json.substring(0, 200)}`);
         // Return empty lists on error. Consider if specific error reporting to Bubble user is needed.
         return {
             dot_notation_keys: [],
-            dot_notation_key_values: []
+            dot_notation_key_values: [],
+            is_error: true,
+            error_message: error.message
         };
     }
 }

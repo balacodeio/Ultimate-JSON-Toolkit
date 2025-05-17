@@ -130,7 +130,14 @@ These are the configurable fields for the element that users will set in the Bub
     *   **Default Value:** `no`
     *   **Documentation:** If checked, keys of objects will be sorted alphabetically in 'tree', 'view', and 'form' modes.
 
-15. **ID / Name:** `theme`
+15. **ID / Name:** `allowSchemaSuggestions`
+    *   **Caption:** Allow Schema Suggestions
+    *   **Type:** `boolean` ("yes/no")
+    *   **Editor Type:** Checkbox
+    *   **Default Value:** `no`
+    *   **Documentation:** If checked and a schema is provided, enables autocomplete suggestions based on the schema.
+
+16. **ID / Name:** `theme`
     *   **Caption:** Editor Theme (Optional)
     *   **Type:** `text`
     *   **Editor Type:** Text Input
@@ -250,3 +257,7 @@ These are actions that can be called on the element in Bubble workflows.
 11. **ID / Name:** `validateJson`
     *   **Caption:** Validate JSON
     *   **Documentation:** Explicitly triggers validation of the current JSON content against the provided schema. Updates "Is Valid JSON" and "Error Messages" states and triggers the "Validated" event.
+
+12. **ID / Name:** `refreshEditor`
+    *   **Caption:** Refresh Editor
+    *   **Documentation:** Forces the editor to refresh its user interface and update all rendered HTML. Useful after making changes that might affect the display but don't automatically trigger a refresh.

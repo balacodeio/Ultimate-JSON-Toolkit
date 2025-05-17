@@ -1,4 +1,4 @@
-let ssa = async function(properties, context) {
+async function(properties, context) {
   const jsonSchemaGenerator = require('json-schema-generator');
   const jsonSchemaFaker = require('json-schema-faker');
 
@@ -13,7 +13,7 @@ let ssa = async function(properties, context) {
       parsedInput = JSON.parse(inputData);
     } catch (e) {
       errorMessage = "Invalid JSON: " + e.message;
-      context.log("JSON Parse Error: " + e.message);
+      console.log("JSON Parse Error: " + e.message);
       return { output_data: null, error_message: errorMessage };
     }
 
@@ -22,7 +22,7 @@ let ssa = async function(properties, context) {
         outputData = JSON.stringify(jsonSchemaGenerator(parsedInput));
       } catch (e) {
         errorMessage = "Schema Generation Error: " + e.message;
-        context.log("Schema Generation Error: " + e.message);
+        console.log("Schema Generation Error: " + e.message);
       }
     } else if (conversionDirection === "Schema to JSON") {
       try {
@@ -31,15 +31,15 @@ let ssa = async function(properties, context) {
         outputData = JSON.stringify(jsonSchemaFaker.generate(parsedInput));
       } catch (e) {
         errorMessage = "Invalid JSON Schema or JSON Generation Error: " + e.message;
-        context.log("JSON Generation Error: " + e.message);
+        console.log("JSON Generation Error: " + e.message);
       }
     } else {
       errorMessage = "Invalid conversion direction.  Must be 'JSON to Schema' or 'Schema to JSON'";
-      context.log(errorMessage);
+      console.log(errorMessage);
     }
   } catch (e) {
     errorMessage = "An unexpected error occurred: " + e.message;
-    context.log("Unexpected error: " + e.message);
+    console.log("Unexpected error: " + e.message);
   }
 
   return {

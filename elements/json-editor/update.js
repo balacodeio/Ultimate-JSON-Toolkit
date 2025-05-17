@@ -133,6 +133,11 @@ let update = function(instance, properties, context) {
             optionsToUpdate.history = properties.enableUndoRedo;
             needsOptionUpdate = true;
         }
+        // Check for changes in isReadOnly property
+        if (properties.isReadOnly !== lastProps.isReadOnly) {
+            optionsToUpdate.readOnly = properties.isReadOnly;
+            needsOptionUpdate = true;
+        }
         if (properties.indentation !== lastProps.indentation) {
             optionsToUpdate.indentation = properties.indentation;
             needsOptionUpdate = true;
@@ -158,6 +163,10 @@ let update = function(instance, properties, context) {
         }
         if (properties.sortObjectKeys !== lastProps.sortObjectKeys) {
             optionsToUpdate.sortObjectKeys = properties.sortObjectKeys;
+            needsOptionUpdate = true;
+        }
+        if (properties.allowSchemaSuggestions !== lastProps.allowSchemaSuggestions) {
+            optionsToUpdate.allowSchemaSuggestions = properties.allowSchemaSuggestions;
             needsOptionUpdate = true;
         }
         if (properties.theme !== lastProps.theme) {
@@ -199,6 +208,7 @@ let update = function(instance, properties, context) {
         // For jsoneditor, onEditable is dynamic.
 
         if (needsOptionUpdate) {
+            console.log('JSONEditor Update - Calling updateOptions with readOnly:', optionsToUpdate.readOnly);
             try {
                 editor.updateOptions(optionsToUpdate);
             } catch (e) {

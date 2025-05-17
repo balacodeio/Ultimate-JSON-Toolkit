@@ -10,23 +10,29 @@ async function(properties, context) {
         console.log('Error: Input JSON string is empty or not a string.');
         return {
             compacted_json: null,
-            error: 'Input JSON string is empty or not a string.'
+            error_message: 'Input JSON string is empty or not a string.',
+            is_error: true
         };
     }
 
     let parsedJson;
     let compactedJsonString;
 
+    // Replace structural escaped newlines with actual newlines for correct parsing
+    // This regex targets \n that are not preceded by an odd number of backslashes
+    const cleanedJsonString = jsonString.replace(/(?<!\\)(?:\\\\)*\\n/g, '\n');
+
     // Rule IV.C & VII.3: Error Handling
     try {
-        parsedJson = JSON.parse(jsonString);
+        parsedJson = JSON.parse(cleanedJsonString);
     } catch (error) {
         // Rule IV.C: Use console.log for server-side logging (overriding .clinerules based on runtime error)
         console.log(`Error parsing JSON: ${error.message}`);
         return {
             compacted_json: null,
             // Rule IV.C: Return meaningful errors
-            error: `Invalid JSON input: ${error.message}`
+            error_message: `Invalid JSON input: ${error.message}`,
+            is_error: true
         };
     }
 
@@ -38,14 +44,16 @@ async function(properties, context) {
         console.log(`Error stringifying JSON: ${error.message}`); // Overriding .clinerules
         return {
             compacted_json: null,
-            error: `Error compacting JSON: ${error.message}`
+            error_message: `Error compacting JSON: ${error.message}`,
+            is_error: true
         };
     }
 
     // Rule IV.C: Complex Server-Side Return Values (using simple key-values here)
     return {
         compacted_json: compactedJsonString,
-        error: null
+        error_message: null,
+        is_error: false
     };
 
     // Rule IV.A.2: Always require semicolons (implicitly handled by Prettier/ESLint in many setups, but good practice)
