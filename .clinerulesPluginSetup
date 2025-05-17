@@ -1,0 +1,88 @@
+# Bubble.io Plugin Developer Documentation Rules
+
+This document outlines the rules and standards for creating and maintaining developer-focused documentation within the Bubble.io plugin project.
+
+## 1. Code Commenting Rules
+
+*   **Purpose:** Use comments to explain *why* the code is doing something, rather than *what* it is doing (which should be clear from the code itself).
+*   **Complexity:** Add comments for complex algorithms, non-obvious logic, or sections that might be difficult for another developer to understand quickly.
+*   **Workarounds:** Document any workarounds or specific reasons for implementing something in a non-standard way.
+*   **External References:** Include links to relevant documentation or resources if a piece of code relies on external libraries, APIs, or specific Bubble behaviors.
+*   **Style:**
+    *   Use `//` for inline comments.
+    *   Use `/* ... */` for block comments spanning multiple lines.
+*   **Maintenance:** Ensure comments are updated whenever the code they refer to changes. Outdated comments can be misleading.
+
+## 2. JSDoc Standards
+
+*   **Purpose:** Use JSDoc to document JavaScript functions, parameters, return values, and other code elements to provide structured information for documentation generators and IDEs.
+*   **Functions:** Document every function with a description of its purpose.
+*   **Parameters:** For each function parameter, use the `@param` tag to specify:
+    *   The data type (e.g., `{string}`, `{number}`, `{boolean}`, `{object}`, `{Array<string>}`). Use Bubble-specific types where appropriate (e.g., `{Bubble.Thing}`, `{Bubble.List}`).
+    *   The parameter name.
+    *   A description of the parameter's purpose.
+    *   Indicate optional parameters using square brackets around the name (e.g., `[paramName]`).
+*   **Return Values:** For functions that return a value, use the `@returns` tag to specify:
+    *   The data type of the return value.
+    *   A description of the returned value.
+*   **Async Functions:** Use the `@async` tag for asynchronous functions.
+*   **Events:** Use `@fires` to document events that a function might trigger.
+*   **Listeners:** Use `@listens` to document event listeners within a function.
+*   **Custom Types:** Use `@typedef` to define custom or complex data types used within the code.
+*   **Examples:**
+
+```javascript
+/**
+ * Calculates the sum of two numbers.
+ * @param {number} num1 The first number.
+ * @param {number} num2 The second number.
+ * @returns {number} The sum of num1 and num2.
+ */
+function add(num1, num2) {
+  return num1 + num2;
+}
+
+/**
+ * Sets the JSON content of the editor element.
+ * @param {Bubble.Instance} instance The element instance.
+ * @param {object} properties The element properties.
+ * @param {string} properties.jsonString The JSON string to set.
+ * @param {Bubble.Context} context The element context.
+ * @fires jsonChanged
+ * @fires errorOccurred
+ */
+let action = function(instance, properties, context) {
+  // ... action logic ...
+};
+```
+
+## 3. `plugin-setup.md` Maintenance Rules
+
+*   **Purpose:** The `plugin-setup.md` file serves as a single source of truth for documenting all user-facing aspects of the plugin for other plugin developers or for internal reference. It should detail all Client-Side Actions, Server-Side Actions, and Elements.
+*   **Location:** The `plugin-setup.md` file should be located at the root of the plugin project directory.
+*   **Structure:** The file must include the following top-level sections:
+    *   `# [Plugin Name] Setup Guide`
+    *   `## Overall Plugin Information`
+    *   `## Client-Side Actions`
+    *   `## Server-Side Actions`
+    *   `## Elements`
+*   **Content for Overall Plugin Information:** Include details such as the plugin's public name, description, categories, icon requirements, and any standard Bubble properties that are particularly relevant or utilized by the plugin (referencing the plugin editor settings).
+*   **Content for Client-Side Actions and Server-Side Actions:** For each standalone action, include:
+    *   Action Name (Caption)
+    *   Internal ID/Name
+    *   Description
+    *   Fields (For each field: ID/Name, Caption, Type, Editor Type, Default Value, Documentation, Example)
+    *   Exposed States (If applicable: ID/Name, Caption, Type, Documentation)
+    *   Events (If applicable: ID/Name, Caption, Documentation)
+*   **Content for Elements:** For each visual element, include:
+    *   Element Name (Caption)
+    *   Internal ID/Name
+    *   Description
+    *   Standard Bubble Properties utilized
+    *   Autobinding details (if supported)
+    *   Properties (Fields) Section (Similar details as action fields)
+    *   Exposed States Section (Similar details as action exposed states)
+    *   Events Section (Similar details as action events)
+    *   Actions Section (Similar details as element-specific actions, including fields)
+    *   Refer to the structure and level of detail in `elements\json-editor\element-setup.md` as a template for documenting individual elements.
+*   **Maintenance:** The `plugin-setup.md` file **must** be updated whenever any user-facing aspect of a CSA, SSA, or Element is added, removed, or modified (e.g., adding a new property, changing an event name, updating an action's description).

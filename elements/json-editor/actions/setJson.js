@@ -25,7 +25,7 @@ let action = function(instance, properties, context) {
                    instance.publishState('errorMessages', validationErrors.map(e => `${e.path ? e.path.join('.') : 'doc_root'} - ${e.message}`));
                 } else {
                    instance.publishState('isValidJson', true);
-                   instance.publishState('errorMessages', null);
+                   instance.publishState('errorMessages', []);
                 }
                 instance.triggerEvent('jsonChanged'); // Explicitly trigger if onChange doesn't cover programmatic changes well
 
@@ -37,7 +37,7 @@ let action = function(instance, properties, context) {
                     editor.setText(jsonString); // Fallback to setText
                     instance.publishState('currentJsonText', jsonString);
                     instance.publishState('isValidJson', false); // Likely invalid if parse failed
-                    instance.publishState('errorMessages', 'Invalid JSON provided: ' + e.message);
+                    instance.publishState('errorMessages', ['Invalid JSON provided: ' + e.message]);
                     instance.triggerEvent('errorOccurred');
                 } catch (setTextError) {
                      context.reportDebugger('setJson action: Fallback setText also failed. ' + setTextError.message);

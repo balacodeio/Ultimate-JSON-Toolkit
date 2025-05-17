@@ -10,7 +10,7 @@ let initialize = function(instance, context) {
     editorDiv.id = instance.data.editorContainerId;
     // For "fit height to content", the inner container should determine its own height.
     // instance.canvas will be adjusted by instance.setHeight().
-    editorDiv.style.width = '100%'; 
+    editorDiv.style.width = '100%';
     // editorDiv.style.height = 'auto'; // Let content dictate height initially.
     instance.canvas.append(editorDiv);
     instance.data.editor_container = editorDiv; // Store reference to the DOM element
@@ -59,7 +59,7 @@ let initialize = function(instance, context) {
             // For now, let's assume editor_container's scrollHeight is representative.
             // Add a small buffer for padding/margins if necessary.
             let contentHeight = instance.data.editor_container.scrollHeight;
-            
+
             // The jsoneditor library might have its own outer div that contains everything.
             // Let's try to find the main editor HTML element.
             const editorMainElement = instance.data.editor_container.querySelector('.jsoneditor');
@@ -89,7 +89,7 @@ let initialize = function(instance, context) {
         // Store the initial properties received from update.js
         // These are live and will be updated by subsequent calls to update.js
         instance.data.currentProperties = initialProperties;
-        
+
         // Make a deep copy for `lastProperties` for change detection in update.js
         // Simple JSON stringify/parse for basic properties. Bubble lists/dates might need more care.
         try {
@@ -108,12 +108,12 @@ let initialize = function(instance, context) {
             }
             return; // Cannot proceed
         }
-        
+
         const options = {};
 
         // Populate options from initialProperties
         options.mode = initialProperties.mode || 'tree';
-        
+
         // Set initial readOnly option
         options.readOnly = initialProperties.isReadOnly !== undefined ? initialProperties.isReadOnly : false;
 
@@ -125,7 +125,7 @@ let initialize = function(instance, context) {
                     options.modes = modesArray;
                 } else {
                     // If CSV is empty after trim/filter (e.g. ", ,") or just whitespace
-                    options.modes = ['tree', 'view', 'form', 'code', 'text']; 
+                    options.modes = ['tree', 'view', 'form', 'code', 'text'];
                 }
             } catch (e) {
                 context.reportDebugger('Error processing allowedModes CSV string: ' + e.message);
@@ -133,19 +133,19 @@ let initialize = function(instance, context) {
             }
         } else {
             // Default if property is not set, is not a string, or is an empty string
-            options.modes = ['tree', 'view', 'form', 'code', 'text']; 
+            options.modes = ['tree', 'view', 'form', 'code', 'text'];
         }
 
         if (initialProperties.schema) {
             try { options.schema = JSON.parse(initialProperties.schema); }
-            catch (e) { 
+            catch (e) {
                 context.reportDebugger('Invalid schema JSON: ' + e.message);
                 options.schema = undefined; // Important to set to undefined if invalid
             }
         }
         if (initialProperties.schemaRefs) {
             try { options.schemaRefs = JSON.parse(initialProperties.schemaRefs); }
-            catch (e) { 
+            catch (e) {
                 context.reportDebugger('Invalid schemaRefs JSON: ' + e.message);
                 options.schemaRefs = undefined;
             }
@@ -160,17 +160,15 @@ let initialize = function(instance, context) {
         options.escapeUnicode = initialProperties.escapeUnicode !== undefined ? initialProperties.escapeUnicode : false;
         options.sortObjectKeys = initialProperties.sortObjectKeys !== undefined ? initialProperties.sortObjectKeys : false;
         options.theme = initialProperties.theme || undefined; // e.g., 'ace/theme/jsoneditor'
-        
+
         // onEditable callback to handle readOnly state
         options.onEditable = function (node) {
             // Access live properties via instance.data.currentProperties
             if (instance.data.currentProperties && instance.data.currentProperties.isReadOnly) {
-                console.log('JSONEditor Initialize - onEditable returning:', false);
                 return false; // Not editable if isReadOnly is true
             }
             // Default: node is editable (field and value)
             // For specific node types, can return { field: boolean, value: boolean }
-            console.log('JSONEditor Initialize - onEditable returning:', true);
             return true;
         };
 
@@ -178,23 +176,23 @@ let initialize = function(instance, context) {
         options.onChange = function() {
             if (!instance.data.editor) return;
             try {
-                const currentJson = instance.data.editor.get(); 
+                const currentJson = instance.data.editor.get();
                 const currentJsonString = instance.data.editor.getText();
                 debouncedPublishJson(currentJsonString, currentJson); // This now also handles autobinding state
-                
+
                 const validationErrors = instance.data.editor.validate();
                 if (validationErrors && validationErrors.length > 0) {
                    instance.publishState('isValidJson', false);
-                   instance.publishState('errorMessages', validationErrors.map(e => `${e.path ? e.path.join('.') : 'doc_root'} - ${e.message}`).join('\\n'));
+                   instance.publishState('errorMessages', validationErrors.map(e => `${e.path ? e.path.join('.') : 'doc_root'} - ${e.message}`));
                 } else {
                    instance.publishState('isValidJson', true);
-                   instance.publishState('errorMessages', '');
+                   instance.publishState('errorMessages', []);
                 }
                 debouncedUpdateHeight(); // Update height on content change
             } catch (e) {
                 // This catch is if .get() itself fails (e.g., text mode with invalid JSON)
                 instance.publishState('isValidJson', false);
-                instance.publishState('errorMessages', [e.message].join('\\n'));
+                instance.publishState('errorMessages', [e.message]);
                 // Still publish the raw text
                 instance.publishState('currentJsonText', instance.data.editor.getText());
                 // instance.publishState('currentJsonObject', null); // Removed
@@ -210,7 +208,7 @@ let initialize = function(instance, context) {
             instance.triggerEvent('modeChanged');
             debouncedUpdateHeight(); // Mode change can affect height
         };
-        
+
         options.onError = function(err) {
             // This is for parsing errors, schema validation errors if not caught by onValidate, etc.
             if (!instance.data.editor) return;
@@ -218,11 +216,11 @@ let initialize = function(instance, context) {
             const errorMessages = Array.isArray(err)
                 ? err.map(e => e.message || String(e))
                 : [(err && err.message) ? err.message : String(err)];
-            instance.publishState('errorMessages', errorMessages.join('\\n'));
+            instance.publishState('errorMessages', errorMessages);
             instance.triggerEvent('errorOccurred');
             context.reportDebugger('JSONEditor reported error(s): ' + errorMessages.join('; '));
         };
-        
+
         options.onFocus = function() {
             if (!instance.data.editor) return;
             instance.triggerEvent('focused');
@@ -231,17 +229,17 @@ let initialize = function(instance, context) {
             if (!instance.data.editor) return;
             instance.triggerEvent('blurred');
         };
-        
+
         options.onValidate = function(validationResult) {
             // According to docs, onValidate receives an array of error objects.
             // An empty array means valid.
             if (!instance.data.editor) return;
             if (Array.isArray(validationResult) && validationResult.length > 0) {
                instance.publishState('isValidJson', false);
-               instance.publishState('errorMessages', validationResult.map(e => `${e.path ? e.path.join('.') : 'doc_root'} - ${e.message}`).join('\\n'));
+               instance.publishState('errorMessages', validationResult.map(e => `${e.path ? e.path.join('.') : 'doc_root'} - ${e.message}`));
             } else {
                instance.publishState('isValidJson', true);
-               instance.publishState('errorMessages', '');
+               instance.publishState('errorMessages', []);
             }
             instance.triggerEvent('validated');
         };
@@ -266,10 +264,10 @@ let initialize = function(instance, context) {
         // Instantiate the editor
         try {
             instance.data.editor = new JSONEditor(instance.data.editor_container, options, initialJsonData);
-            
+
             // Initial state publishing after editor is successfully created
             instance.publishState('currentMode', instance.data.editor.getMode());
-            
+
             let currentText = "{}"; // Default if get fails
             let currentJson = {};   // Default if get fails
             let isValidInitially = true;
@@ -284,7 +282,7 @@ let initialize = function(instance, context) {
                 initialErrorMessages.push('Failed to load initial JSON: ' + e.message);
                 // currentText might be the problematic string from initialJsonData if editor loaded it as text
             }
-            
+
             instance.publishState('currentJsonText', currentText);
             // instance.publishState('currentJsonObject', isValidInitially ? currentJson : null); // Removed
 
@@ -294,9 +292,9 @@ let initialize = function(instance, context) {
                isValidInitially = false;
                initialErrorMessages.push(...validationErrors.map(e => `${e.path ? e.path.join('.') : 'doc_root'} - ${e.message}`));
             }
-            
+
             instance.publishState('isValidJson', isValidInitially);
-            instance.publishState('errorMessages', initialErrorMessages.join('\\n'));
+            instance.publishState('errorMessages', initialErrorMessages);
 
         } catch (e) {
             // This catches errors during new JSONEditor() instantiation
@@ -308,7 +306,7 @@ let initialize = function(instance, context) {
             // instance.data.isReady will remain false, update.js won't proceed with this editor.
             return; // Exit setupEditorInstance if editor creation failed
         }
-        
+
         // Initial height update
         debouncedUpdateHeight();
 
@@ -326,7 +324,7 @@ let initialize = function(instance, context) {
                 instance.data.resizeObserver.observe(editorMainElementToObserve);
             }
         }
-        
+
         // If we reach here, editor is created. isReady will be set by update.js.
     };
 

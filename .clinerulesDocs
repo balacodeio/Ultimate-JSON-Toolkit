@@ -1,0 +1,49 @@
+# Bubble.io Plugin End-User Documentation Rules
+
+This document outlines the rules and standards for creating and maintaining documentation intended for end-users of the Bubble.io plugin (app developers using the plugin in their Bubble applications).
+
+## 1. Plugin Name
+
+*   **Rule:** The plugin name used in end-user documentation should consistently match the "Public Name" defined in the plugin editor and referenced from the `package.json` file.
+*   **Guidance:** Ensure the name is used accurately and consistently throughout all user-facing documentation and marketing materials.
+
+## 2. SEO Description
+
+*   **Purpose:** The SEO description is crucial for the plugin marketplace and helps users understand the plugin's core function at a glance.
+*   **Structure:** The SEO description must follow this specific format:
+    *   The first line should be a concise summary clearly stating what the plugin does.
+    *   This first line must be followed by exactly two blank lines.
+    *   The remaining description should provide further details about features, benefits, and use cases.
+*   **Example:**
+
+```
+This plugin provides an interactive JSON editor for your Bubble app.
+
+
+It allows users to view, edit, format, and validate JSON data directly within your application interface. Supports various modes like tree, code, and form, and includes features like schema validation, search, and undo/redo.
+```
+
+## 3. Usage Instructions
+
+*   **Completeness:** Provide clear and comprehensive instructions on how end-users can install and utilize the plugin's features within their Bubble applications.
+*   **Installation:** Include steps for installing the plugin from the Bubble marketplace.
+*   **Element Usage:** For visual elements, explain how to add the element to a page, configure its properties in the element inspector, and understand its exposed states and events.
+*   **Action Usage:** For standalone actions (CSAs and SSAs), explain how to find and use them within Bubble workflows, including how to configure their fields and handle their results or triggered events.
+*   **Examples:** Include practical, step-by-step examples demonstrating common use cases for the plugin's features. Use screenshots or short videos where helpful.
+*   **Clarity:** Use clear and simple language, avoiding jargon where possible. Assume the user has a basic understanding of Bubble but may be new to your specific plugin.
+*   **Troubleshooting:** Include a section with common issues and their solutions.
+*   **Maintenance:** Keep usage instructions updated whenever plugin features or configurations change.
+
+## 4. README.md Content and Maintenance
+
+*   **Purpose:** The `README.md` file located at the root of the project serves as the primary source of end-user documentation for the plugin. It is the first place users will look for information.
+*   **Content:** The `README.md` file must include:
+    *   A clear and engaging introduction to the plugin.
+    *   The SEO description (following the format in Rule 2).
+    *   Detailed usage instructions (following the guidelines in Rule 3).
+    *   Comprehensive examples demonstrating how to implement the plugin's features in a Bubble application.
+    *   Information on installation, prerequisites, and any known limitations.
+    *   A troubleshooting section.
+    *   Links to additional resources (e.g., demo applications, forums).
+*   **Examples:** Provide code snippets, workflow screenshots, or links to a live demo application to illustrate how to use the plugin effectively. Examples should cover the main functionalities of the plugin.
+*   **Maintenance:** The `README.md` file **must** be regularly reviewed and updated to reflect the current state of the plugin. Any changes to features, properties, states, events, actions, or installation steps require a corresponding update to the `README.md`. Ensure examples remain accurate and functional.
