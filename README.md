@@ -101,7 +101,6 @@ These actions run on the server and can be used in your Bubble workflows to perf
 *   **Prerequisites:** Requires a Bubble.io account. *(Add any specific plan requirements or external service needs here if applicable)*
 *   **Limitations:**
     *   Performance may degrade with extremely large JSON datasets.
-    *   *(Add any other known limitations here)*
 
 ## Troubleshooting
 
@@ -118,5 +117,4 @@ For support or inquiries, please contact: hello@balacode.io
 
 ## Additional Resources
 
-*   [Link to Demo Application (if available)]
-*   [Link to Bubble Forum Thread or Support Page]
+*   [Ultimate JSON Toolkit Plugin Page](https://bubble.io/plugin/ultimate-json-toolkit-1747320116038x575809202516131840)
