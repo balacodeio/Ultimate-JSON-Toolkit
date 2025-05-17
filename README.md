@@ -112,7 +112,7 @@ These actions run on the server and can be used in your Bubble workflows to perf
 
 ## Author
 
-This plugin is developed and maintained by Balacode.
+This plugin is developed and maintained by Balacode.io
 
 For support or inquiries, please contact: hello@balacode.io
 
