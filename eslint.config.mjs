@@ -34,5 +34,11 @@ export default [
       ecmaVersion: 2022,
       sourceType: 'module'
     }
+  },
+  {
+    files: ['actions/server/**/*.js'],
+    languageOptions: {
+        sourceType: 'script'
+    }
   }
 ];
