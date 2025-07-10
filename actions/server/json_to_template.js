@@ -11,52 +11,25 @@ async function(properties, context) {
         let result = isArray ? '[' : '{';
         let first = true;
 
-        const keys = Object.keys(obj);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
-
-            const originalValue = obj[key];
-            const newPath = currentPath ? `${currentPath}.${key}` : key;
-
-            if (!first) {
-                result += ',';
-            }
-            first = false;
-
-            if (ignoredKeys.has(newPath)) {
-                // If key is ignored, stringify its original value and append
+        if (isArray) {
+            // For arrays, if not empty, output a single template for the parent key, not per element
+            if (obj.length > 0) {
+                if (!first) {
+                    result += ',';
+                }
+                first = false;
                 if (!compact) {
                     result += `\n${indent}`;
                 }
-                if (!isArray) {
-                    result += `"${key}":${compact ? '' : ' '}`;
-                }
-                const ignoredValueIndent = compact ? 0 : 2;
-                const ignoredValueJoiner = compact ? '' : `\n${indent}`;
-                result += JSON.stringify(originalValue, null, ignoredValueIndent).split('\n').join(ignoredValueJoiner);
-                continue;
-            }
-
-            if (!compact) {
-                result += `\n${indent}`;
-            }
-            if (!isArray) {
-                result += `"${key}":${compact ? '' : ' '}`;
-            }
-
-            if (typeof originalValue === 'object' && originalValue !== null) {
-                result += buildTemplateString(originalValue, ignoredKeys, wrappingOption, compact, newPath, indent + '  ');
-            } else {
                 let replacement;
-                const template = `<${isArray ? originalValue : key}>`;
-
+                const template = `<${currentPath}>`;
                 switch (wrappingOption) {
                     case 'Wrap all':
                         replacement = `"${template}"`;
                         break;
                     case 'Wrap only strings':
-                        if (typeof originalValue === 'string') {
+                        // If all elements are strings, wrap, else don't
+                        if (obj.every(v => typeof v === 'string')) {
                             replacement = `"${template}"`;
                         } else {
                             replacement = template;
@@ -68,6 +41,61 @@ async function(properties, context) {
                         break;
                 }
                 result += replacement;
+            }
+        } else {
+            const keys = Object.keys(obj);
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+
+                const originalValue = obj[key];
+                const newPath = currentPath ? `${currentPath}.${key}` : key;
+
+                if (!first) {
+                    result += ',';
+                }
+                first = false;
+
+                if (ignoredKeys.has(newPath)) {
+                    // If key is ignored, stringify its original value and append
+                    if (!compact) {
+                        result += `\n${indent}`;
+                    }
+                    result += `"${key}":${compact ? '' : ' '}`;
+                    const ignoredValueIndent = compact ? 0 : 2;
+                    const ignoredValueJoiner = compact ? '' : `\n${indent}`;
+                    result += JSON.stringify(originalValue, null, ignoredValueIndent).split('\n').join(ignoredValueJoiner);
+                    continue;
+                }
+
+                if (!compact) {
+                    result += `\n${indent}`;
+                }
+                result += `"${key}":${compact ? '' : ' '}`;
+
+                if (typeof originalValue === 'object' && originalValue !== null) {
+                    result += buildTemplateString(originalValue, ignoredKeys, wrappingOption, compact, newPath, indent + '  ');
+                } else {
+                    let replacement;
+                    const template = `<${newPath}>`;
+                    switch (wrappingOption) {
+                        case 'Wrap all':
+                            replacement = `"${template}"`;
+                            break;
+                        case 'Wrap only strings':
+                            if (typeof originalValue === 'string') {
+                                replacement = `"${template}"`;
+                            } else {
+                                replacement = template;
+                            }
+                            break;
+                        case 'No wrapping':
+                        default:
+                            replacement = template;
+                            break;
+                    }
+                    result += replacement;
+                }
             }
         }
 
