@@ -18,22 +18,29 @@ async function(properties, context) {
     let parsedJson;
     let compactedJsonString;
 
-    // Replace structural escaped newlines with actual newlines for correct parsing
-    // This regex targets \n that are not preceded by an odd number of backslashes
-    const cleanedJsonString = jsonString.replace(/(?<!\\)(?:\\\\)*\\n/g, '\n');
-
     // Rule IV.C & VII.3: Error Handling
+    // Step 1: Try parsing the JSON as-is first (handles properly formatted JSON)
     try {
-        parsedJson = JSON.parse(cleanedJsonString);
-    } catch (error) {
-        // Rule IV.C: Use console.log for server-side logging (overriding .clinerules based on runtime error)
-        console.log(`Error parsing JSON: ${error.message}`);
-        return {
-            compacted_json: null,
-            // Rule IV.C: Return meaningful errors
-            error_message: `Invalid JSON input: ${error.message}`,
-            is_error: true
-        };
+        parsedJson = JSON.parse(jsonString);
+    } catch (firstError) {
+        // Step 2: Fallback - apply compatible regex cleaning for structural \n sequences
+        // This regex avoids negative lookbehind for better compatibility
+        // Matches \n that are not preceded by an odd number of backslashes
+        const cleanedJsonString = jsonString.replace(/(^|[^\\])(\\\\)*\\n/g, '$1$2\n');
+        
+        try {
+            parsedJson = JSON.parse(cleanedJsonString);
+        } catch (secondError) {
+            // Rule IV.C: Use console.log for server-side logging (overriding .clinerules based on runtime error)
+            console.log(`Error parsing JSON after cleaning: ${secondError.message}`);
+            console.log(`Original error: ${firstError.message}`);
+            return {
+                compacted_json: null,
+                // Rule IV.C: Return meaningful errors
+                error_message: `Invalid JSON input: ${secondError.message}`,
+                is_error: true
+            };
+        }
     }
 
     try {
