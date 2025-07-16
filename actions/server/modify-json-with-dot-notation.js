@@ -56,13 +56,18 @@ let ssa = async function(properties, context) {
             const trimmedKey = key.trim();
             const trimmedValue = value.trim();
             
-            // Try to parse the value as JSON, otherwise use as string
+            // Handle empty values by setting them to null
             let parsedValue;
-            try {
-              parsedValue = JSON.parse(trimmedValue);
-            } catch (valueParseError) {
-              // If JSON parsing fails, use the value as a string
-              parsedValue = trimmedValue;
+            if (trimmedValue === '') {
+              parsedValue = null;
+            } else {
+              // Try to parse the value as JSON, otherwise use as string
+              try {
+                parsedValue = JSON.parse(trimmedValue);
+              } catch (valueParseError) {
+                // If JSON parsing fails, use the value as a string
+                parsedValue = trimmedValue;
+              }
             }
             
             dotInstance.set(trimmedKey, parsedValue, parsedJson);
